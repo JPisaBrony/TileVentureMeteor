@@ -10,16 +10,24 @@
     <canvas id="mainCanvas">
         Your browser doesnt support the canvas tag
     </canvas>
-    <div class="menu">
-        <h2 style="text-align: center">Menu</h2>
-        <div style="padding-left: 62px;" id="menu">
-            <input type="color" id="color">
-            <button id="add">Add</button><br>
-            <ul class="list-group">
-                {{#each colorlist}}
-                    <li class="list-group-item" style="background-color: {{color}}"></li>
-                {{/each}}
-            </ul>
+    <div class="menu container">
+        <div class="row">
+            <div class="col-sm-12 text-center" style="font-size: 30px">Menu</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 text-center">Color Selection</div>
+        </div>
+        <div class="row" style="padding-top: 5px;">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-9">
+                <input type="color" style="width: 60px; height: 34px;" id="color">
+                <button id="add" class="btn pull-right">Add</button>
+                <ul style="padding-top:10px;" class="list-group">
+                    {{#each colorlist}}
+                        <li class="list-group-item" style="background-color: {{color}}"></li>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
     </div>
 </template>

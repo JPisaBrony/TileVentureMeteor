@@ -30,7 +30,7 @@ Template.main.rendered = function() {
     c.height = h;
     var ctx = c.getContext("2d");
     
-    var img = createImageFromColor("#00ECFF");
+    var img = createImageFromColor("#FFFFFF");
 
     for(i = 0; i < w+textureSize; i += textureSize) {
         grid[i/textureSize] = [];
