@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating';
+import { Mongo } from 'meteor/mongo';
 import './main.html';
 
 // GLOBALS
@@ -8,6 +9,7 @@ var canvas = document.createElement('canvas');
 canvas.width = textureSize;
 canvas.height = textureSize;
 var selCtx = canvas.getContext('2d');
+var Grid = new Mongo.Collection("grid");
 
 function createImageFromColor(color) {
     var img = new Image(textureSize, textureSize);
@@ -63,6 +65,7 @@ Template.main.rendered = function() {
     $(document).on("click", function(e) {
         var x = Math.floor(e.pageX / textureSize);
         var y = Math.floor(e.pageY / textureSize);
+        Grid.insert({x: x, y: y, img: selectedImage.src});
         grid[x][y] = selectedImage;
         redrawSection(x, y, 1, 1, x * textureSize, y * textureSize);
         ctx.beginPath();
@@ -79,6 +82,20 @@ Template.main.rendered = function() {
             }
         }
     }
+
+    Grid.find().observeChanges({
+        added: function(id, fields) {
+            console.log(fields);
+            var x = fields.x;
+            var y = fields.y;
+            var img = new Image(textureSize, textureSize);
+            img.src = fields.img;
+            grid[x][y] = img;
+            img.onload = function() {
+                ctx.drawImage(grid[x][y], x * textureSize, y * textureSize);
+            }
+        },
+    });
 }
 
 Template.main.helpers({
