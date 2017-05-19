@@ -24,3 +24,7 @@ canvas {
     height: 100px;
     width: 100px;
 }
+
+li {
+    margin-top: 5px;
+}
