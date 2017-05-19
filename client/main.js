@@ -3,7 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import './main.html';
 
 // GLOBALS
-var textureSize = 16, i, j;
+var textureSize = 32, i, j;
 var selectedImage = new Image(textureSize, textureSize);
 var canvas = document.createElement('canvas');
 canvas.width = textureSize;
@@ -47,7 +47,7 @@ Template.main.rendered = function() {
         }
     }
     
-    $(document).mousemove(function(e) {
+    $(c).mousemove(function(e) {
         var x = Math.floor(e.pageX / textureSize) * textureSize;
         var y = Math.floor(e.pageY / textureSize) * textureSize;
         if(lastSel.x != x || lastSel.y != y) {
@@ -62,7 +62,7 @@ Template.main.rendered = function() {
         }
     });
 
-    $(document).on("click", function(e) {
+    $(c).on("click", function(e) {
         var x = Math.floor(e.pageX / textureSize);
         var y = Math.floor(e.pageY / textureSize);
         if(selectedImage.src != "") {
@@ -126,4 +126,53 @@ Template.main.events({
         });
         $(e.target).addClass("active");
     },
+    'click #createTexture': function() {
+        Modal.show("createTextureModal");
+    },
+});
+
+Template.createTextureModal.rendered = function() {
+    var c = document.getElementById("createTileCanvas");
+    var ctx = c.getContext("2d");
+    var w = 256;
+    var h = 256;
+    var lastSel = {x: -1, y: -1};
+    c.width = w;
+    c.height = h;
+    $(c).css("width", w + "px");
+    $(c).css("height", h + "px");
+    $(c).mousemove(function(e) {
+        var x = Math.floor((e.pageX - $(c).offset().left) / textureSize) * textureSize;
+        var y = Math.floor((e.pageY - $(c).offset().top) / textureSize) * textureSize;
+        if(lastSel.x != x || lastSel.y != y) {
+            if(lastSel.x != -1 && lastSel.y != -1) {
+                ctx.rect(x, y, textureSize, textureSize);
+                ctx.fillStyle = lastSel.color;
+                ctx.fill();
+            }
+            ctx.beginPath();
+            ctx.rect(x + 1, y + 1, textureSize - 2, textureSize - 2);
+            ctx.closePath();
+            ctx.stroke();
+            lastSel.x = x;
+            lastSel.y = y;
+            lastSel.color = "#FFFFFF";
+        }
+    });
+}
+
+Template.createTextureModal.events({
+    'click #fill': function() {
+        var c = document.getElementById("createTileCanvas");
+        var ctx = c.getContext("2d");
+        var w = c.width;
+        var h = c.height;
+        var color = $("#createColor").val();
+        ctx.rect(0, 0, w, h);
+        ctx.fillStyle = color;
+        ctx.fill();
+    },
+    'click #save': function() {
+        alert("not implemented");
+    }
 });

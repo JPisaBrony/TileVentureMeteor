@@ -15,9 +15,18 @@
             <div class="col-sm-12 text-center" style="font-size: 30px">Menu</div>
         </div>
         <div class="row">
+            <div class="col-sm-12 text-center">Grid Actions</div>
+        </div>
+        <div class="row pad">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-9">
+                <button id="createTexture" class="btn" style="width: 100%;">Create Texture</button>
+            </div>
+        </div>
+        <div class="row pad">
             <div class="col-sm-12 text-center">Color Selection</div>
         </div>
-        <div class="row" style="padding-top: 5px;">
+        <div class="row pad">
             <div class="col-xs-1"></div>
             <div class="col-xs-9">
                 <input type="color" style="width: 60px; height: 34px;" id="color">
@@ -27,6 +36,45 @@
                         <li class="list-group-item" style="background-color: {{color}}"></li>
                     {{/each}}
                 </ul>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="createTextureModal">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <h2 class="modal-header">
+                    Create Texture
+                </h2>
+                <div class="modal-body row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-6">Color Selection</div>
+                        </div>
+                        <div class="row pad">
+                            <div class="col-sm-6">
+                                <input type="color" style="width: 50px; height: 50px;" id="createColor">
+                            </div>
+                        </div>
+                        <div class="row pad">
+                            <div class="col-sm-6">
+                                <button class="btn" id="fill">Fill</button>
+                            </div>
+                        </div>
+                        <div class="row pad">
+                            <div class="col-sm-6">
+                                <button class="btn" id="save">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="height: 300px;">
+                        <canvas id="createTileCanvas" style="border: solid">
+                            Your browser doesnt support the canvas tag
+                        </canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
