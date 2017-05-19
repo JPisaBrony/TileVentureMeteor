@@ -98,10 +98,17 @@ Template.main.events({
             Session.set("color-list", [{color: c}]);
         }
     },
-    'click li': function() {
+    'click li': function(e) {
         selCtx.rect(0, 0, textureSize, textureSize);
         selCtx.fillStyle = this.color;
         selCtx.fill();
         selectedImage.src = canvas.toDataURL();
-    }
+        var list = $(e.target).parent();
+        $(".list-group").each(function(i, v) {
+            $(v).find("li").each(function(i, el) {
+                $(el).removeClass("active");
+            });
+        });
+        $(e.target).addClass("active");
+    },
 });
