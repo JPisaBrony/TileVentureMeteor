@@ -99,10 +99,7 @@ Template.main.events({
         }
     },
     'click li': function(e) {
-        selCtx.rect(0, 0, textureSize, textureSize);
-        selCtx.fillStyle = this.color;
-        selCtx.fill();
-        selectedImage.src = canvas.toDataURL();
+        selectedImage = createImageFromColor(this.color);
         var list = $(e.target).parent();
         $(".list-group").each(function(i, v) {
             $(v).find("li").each(function(i, el) {
