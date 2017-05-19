@@ -65,13 +65,15 @@ Template.main.rendered = function() {
     $(document).on("click", function(e) {
         var x = Math.floor(e.pageX / textureSize);
         var y = Math.floor(e.pageY / textureSize);
-        Grid.insert({x: x, y: y, img: selectedImage.src});
-        grid[x][y] = selectedImage;
-        redrawSection(x, y, 1, 1, x * textureSize, y * textureSize);
-        ctx.beginPath();
-        ctx.rect((x * textureSize) + 1, (y * textureSize) + 1, textureSize - 2, textureSize - 2);
-        ctx.closePath();
-        ctx.stroke();
+        if(selectedImage.src != "") {
+            Grid.insert({x: x, y: y, img: selectedImage.src});
+            grid[x][y] = selectedImage;
+            redrawSection(x, y, 1, 1, x * textureSize, y * textureSize);
+            ctx.beginPath();
+            ctx.rect((x * textureSize) + 1, (y * textureSize) + 1, textureSize - 2, textureSize - 2);
+            ctx.closePath();
+            ctx.stroke();
+        }
     });
     
     // initial render of all tiles
@@ -85,7 +87,6 @@ Template.main.rendered = function() {
 
     Grid.find().observeChanges({
         added: function(id, fields) {
-            console.log(fields);
             var x = fields.x;
             var y = fields.y;
             var img = new Image(textureSize, textureSize);
