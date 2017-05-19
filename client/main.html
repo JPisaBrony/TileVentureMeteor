@@ -1,0 +1,25 @@
+<head>
+  <title>TileVenture</title>
+</head>
+
+<body>
+    {{> main}}
+</body>
+
+<template name="main">
+    <canvas id="mainCanvas">
+        Your browser doesnt suppot the canvas tag
+    </canvas>
+    <div class="menu">
+        <h2 style="text-align: center">Menu</h2>
+        <div style="padding-left: 20px;" id="menu">
+            <input type="color" id="color">
+            <button id="add">Add</button><br>
+            <ul class="list-group">
+                {{#each colorlist}}
+                    <li class="list-group-item borderless" style="background-color: {{color}}"></li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</template>
