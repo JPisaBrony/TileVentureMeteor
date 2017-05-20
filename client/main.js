@@ -11,7 +11,6 @@ canvas.height = textureSize;
 var selCtx = canvas.getContext('2d');
 var Grid = new Mongo.Collection("grid");
 var lastSelTex = {x: -1, y: -1};
-//var selectedImageTex = new Image(textureSize, textureSize);
 
 function createImageFromColor(color) {
     var img = new Image(textureSize, textureSize);
@@ -25,7 +24,6 @@ function createImageFromColor(color) {
 function fillRectangleInContext(ctx, x, y, w, h, color) {
     if(color === "#0")
         color = "#000000";
-    console.log(color);
     ctx.beginPath();
     ctx.rect(x, y, w, h);
     ctx.fillStyle = color;
@@ -73,10 +71,7 @@ Template.main.rendered = function() {
         if(lastSel.x != x || lastSel.y != y) {
             if(lastSel.x != -1 && lastSel.y != -1)
                 ctx.drawImage(grid[Math.floor(lastSel.x/textureSize)][Math.floor(lastSel.y/textureSize)], lastSel.x, lastSel.y);
-            ctx.beginPath();
-            ctx.rect(x + 1, y + 1, textureSize - 2, textureSize - 2);
-            ctx.closePath();
-            ctx.stroke();
+            drawRectangleBorderInContex(ctx, x + 1, y + 1, textureSize - 2, textureSize - 2);
             lastSel.x = x;
             lastSel.y = y;
         }
@@ -89,10 +84,7 @@ Template.main.rendered = function() {
             Grid.insert({x: x, y: y, img: selectedImage.src});
             grid[x][y] = selectedImage;
             redrawSection(x, y, 1, 1, x * textureSize, y * textureSize);
-            ctx.beginPath();
-            ctx.rect((x * textureSize) + 1, (y * textureSize) + 1, textureSize - 2, textureSize - 2);
-            ctx.closePath();
-            ctx.stroke();
+            drawRectangleBorderInContex(ctx, (x * textureSize) + 1, (y * textureSize) + 1, textureSize - 2, textureSize - 2);
         }
     });
     
@@ -167,10 +159,7 @@ Template.createTextureModal.rendered = function() {
         if(lastSelTex.x != x || lastSelTex.y != y) {
             if(lastSelTex.x != -1 && lastSelTex.y != -1)
                 fillRectangleInContext(ctx, lastSelTex.x, lastSelTex.y, textureSize, textureSize, lastSelTex.color);
-            ctx.beginPath();
-            ctx.rect(x + 1, y + 1, textureSize - 2, textureSize - 2);
-            ctx.closePath();
-            ctx.stroke();
+            drawRectangleBorderInContex(ctx, x + 1, y + 1, textureSize - 2, textureSize - 2);
             lastSelTex.x = x;
             lastSelTex.y = y;
             var data = ctx.getImageData(x, y, 1, 1).data;
