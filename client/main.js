@@ -10,6 +10,8 @@ canvas.width = textureSize;
 canvas.height = textureSize;
 var selCtx = canvas.getContext('2d');
 var Grid = new Mongo.Collection("grid");
+var lastSelTex = {x: -1, y: -1};
+//var selectedImageTex = new Image(textureSize, textureSize);
 
 function createImageFromColor(color) {
     var img = new Image(textureSize, textureSize);
@@ -18,6 +20,24 @@ function createImageFromColor(color) {
     selCtx.fill();
     img.src = canvas.toDataURL();
     return img;
+}
+
+function fillRectangleInContext(ctx, x, y, w, h, color) {
+    if(color === "#0")
+        color = "#000000";
+    console.log(color);
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.closePath();
+}
+
+function drawRectangleBorderInContex(ctx, x, y, w, h) {
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.closePath();
+    ctx.stroke();
 }
 
 Template.main.rendered = function() {
@@ -136,33 +156,41 @@ Template.createTextureModal.rendered = function() {
     var ctx = c.getContext("2d");
     var w = 256;
     var h = 256;
-    var lastSel = {x: -1, y: -1};
     c.width = w;
     c.height = h;
     $(c).css("width", w + "px");
     $(c).css("height", h + "px");
+    fillRectangleInContext(ctx, 0, 0, w, h, "#FFFFFF");
     $(c).mousemove(function(e) {
         var x = Math.floor((e.pageX - $(c).offset().left) / textureSize) * textureSize;
         var y = Math.floor((e.pageY - $(c).offset().top) / textureSize) * textureSize;
-        if(lastSel.x != x || lastSel.y != y) {
-            if(lastSel.x != -1 && lastSel.y != -1) {
-                ctx.rect(x, y, textureSize, textureSize);
-                ctx.fillStyle = lastSel.color;
-                ctx.fill();
-            }
+        if(lastSelTex.x != x || lastSelTex.y != y) {
+            if(lastSelTex.x != -1 && lastSelTex.y != -1)
+                fillRectangleInContext(ctx, lastSelTex.x, lastSelTex.y, textureSize, textureSize, lastSelTex.color);
             ctx.beginPath();
             ctx.rect(x + 1, y + 1, textureSize - 2, textureSize - 2);
             ctx.closePath();
             ctx.stroke();
-            lastSel.x = x;
-            lastSel.y = y;
-            lastSel.color = "#FFFFFF";
+            lastSelTex.x = x;
+            lastSelTex.y = y;
+            var data = ctx.getImageData(x, y, 1, 1).data;
+            var color = ((data[0] << 16) | (data[1]) << 8 | data[2]).toString(16);
+            lastSelTex.color = "#" + color;
         }
+    });
+    $(c).on("click", function(e) {
+        lastSelTex = {x: -1, y: -1};
+        var x = Math.floor((e.pageX - $(c).offset().left) / textureSize) * textureSize;
+        var y = Math.floor((e.pageY - $(c).offset().top) / textureSize) * textureSize;
+        var color = $("#createColor").val();
+        fillRectangleInContext(ctx, x, y, textureSize, textureSize, color);
+        drawRectangleBorderInContex(ctx, x + 1, y + 1, textureSize - 2, textureSize - 2);
     });
 }
 
 Template.createTextureModal.events({
     'click #fill': function() {
+        lastSelTex = {x: -1, y: -1};
         var c = document.getElementById("createTileCanvas");
         var ctx = c.getContext("2d");
         var w = c.width;
