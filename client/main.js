@@ -10,6 +10,7 @@ canvas.width = textureSize;
 canvas.height = textureSize;
 var selCtx = canvas.getContext('2d');
 var Grid = new Mongo.Collection("grid");
+var Tiles = new Mongo.Collection("tiles");
 var lastSelTex = {x: -1, y: -1};
 
 function createImageFromColor(color) {
@@ -190,6 +191,28 @@ Template.createTextureModal.events({
         ctx.fill();
     },
     'click #save': function() {
-        alert("not implemented");
+        var c = document.getElementById("createTileCanvas");
+        var tile = c.toDataURL();
+        Tiles.insert({tile: tile});
     }
+});
+
+Tiles.find().observeChanges({
+    added: function(id, fields) {
+        var tile = fields.tile;
+        var texGrid = $("#texGrid");
+        var lastRow = texGrid.children().last();
+        var amount = lastRow.children().length;
+        if(amount == 0)
+            texGrid.append("<div class='row pad'><div class='col-xs-1'></div><div class='col-xs-2'><img width='32px' height='32px' src=" + tile + "></div></div></div>");
+
+        if(amount < 5) {
+            lastRow.append("<div class='col-xs-2'><img width='32px' height='32px' src=" + tile +"></div></div>");
+        }
+        else {
+            lastRow = lastRow.parent();
+            lastRow.append("<div class='row pad'><div class='col-xs-1'></div><div class='col-xs-2'><img width='32px' height='32px' src="+ tile + "></div></div></div>");
+        }
+
+    },
 });
