@@ -82,7 +82,11 @@ Template.main.rendered = function() {
         var x = Math.floor(e.pageX / textureSize);
         var y = Math.floor(e.pageY / textureSize);
         if(selectedImage.src != "") {
-            Grid.insert({x: x, y: y, img: selectedImage.src});
+            var find = Grid.findOne({x: x, y: y});
+            if(find == null)
+                Grid.insert({x: x, y: y, img: selectedImage.src});
+            else
+                Grid.update({_id: find._id}, {$set: {img: selectedImage.src}});
             grid[x][y] = selectedImage;
             redrawSection(x, y, 1, 1, x * textureSize, y * textureSize);
             drawRectangleBorderInContex(ctx, (x * textureSize) + 1, (y * textureSize) + 1, textureSize - 2, textureSize - 2);
