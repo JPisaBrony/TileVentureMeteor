@@ -12,6 +12,7 @@ var selCtx = canvas.getContext('2d');
 var Grid = new Mongo.Collection("grid");
 var Tiles = new Mongo.Collection("tiles");
 var lastSelTex = {x: -1, y: -1};
+var lastTextureSel = null;
 
 function createImageFromColor(color) {
     var img = new Image(textureSize, textureSize);
@@ -156,6 +157,10 @@ Template.main.events({
         Modal.show("createTextureModal");
     },
     'click img': function(e) {
+        if(lastTextureSel != null)
+            lastTextureSel.css("border", "");
+        lastTextureSel = $(e.target);
+        $(e.target).css("border", "solid");
         var img = new Image(textureSize, textureSize);
         img.src = $(e.target).attr('src');
         selectedImage = img;
