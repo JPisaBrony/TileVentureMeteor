@@ -102,17 +102,26 @@ Template.main.rendered = function() {
         }
     }
 
-    Grid.find().observeChanges({
-        added: function(id, fields) {
+    function newTileAdded(id, fields) {
+        if(fields.x != null || fields.y != null) {
             var x = fields.x;
             var y = fields.y;
-            var img = new Image(textureSize, textureSize);
-            img.src = fields.img;
-            grid[x][y] = img;
-            img.onload = function() {
-                ctx.drawImage(grid[x][y], x * textureSize, y * textureSize);
-            }
-        },
+        } else {
+            var item = Grid.findOne({_id: id});
+            var x = item.x;
+            var y = item.y;
+        }
+        var img = new Image(textureSize, textureSize);
+        img.src = fields.img;
+        grid[x][y] = img;
+        img.onload = function() {
+            ctx.drawImage(grid[x][y], x * textureSize, y * textureSize);
+        }
+    }
+
+    Grid.find().observeChanges({
+        added: newTileAdded,
+        changed: newTileAdded
     });
 }
 
