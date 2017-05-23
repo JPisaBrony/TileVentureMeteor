@@ -2,6 +2,13 @@ import { Template } from 'meteor/templating';
 import { Mongo } from 'meteor/mongo';
 import './main.html';
 
+toastr.options = {
+  "positionClass": "toast-top-center",
+  "preventDuplicates": true,
+  "timeOut": "2000",
+  "extendedTimeOut": "2000",
+}
+
 Template.main.rendered = function() {
     var c = document.getElementById("mainCanvas");
     var w = window.innerWidth;
@@ -53,6 +60,8 @@ Template.main.rendered = function() {
             grid[x][y] = selectedImage;
             redrawSection(x, y, 1, 1, x * textureSize, y * textureSize);
             drawRectangleBorderInContex(ctx, (x * textureSize) + 1, (y * textureSize) + 1, textureSize - 2, textureSize - 2);
+        } else {
+            toastr.error("Select a texture on the left.");
         }
     });
     
