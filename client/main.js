@@ -95,26 +95,6 @@ Template.main.helpers({
 });
 
 Template.main.events({
-    'click #add': function() {
-        var c = $("#color").val();
-        var colors = Session.get("color-list");
-        if(colors != null) {
-            colors.push({color: c});
-            Session.set("color-list", colors);
-        } else {
-            Session.set("color-list", [{color: c}]);
-        }
-    },
-    'click li': function(e) {
-        selectedImage = createImageFromColor(this.color);
-        var list = $(e.target).parent();
-        $(".list-group").each(function(i, v) {
-            $(v).find("li").each(function(i, el) {
-                $(el).removeClass("active");
-            });
-        });
-        $(e.target).addClass("active");
-    },
     'click #createTexture': function() {
         Modal.show("createTextureModal");
     },
