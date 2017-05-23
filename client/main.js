@@ -6,7 +6,6 @@ toastr.options = {
   "positionClass": "toast-top-center",
   "preventDuplicates": true,
   "timeOut": "2000",
-  "extendedTimeOut": "2000",
 }
 
 Template.main.rendered = function() {
