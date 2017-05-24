@@ -1,6 +1,8 @@
 import { Template } from 'meteor/templating';
 import { Mongo } from 'meteor/mongo';
-import './main.html';
+
+var loadedTextures = [];
+var pageLocation = 0;
 
 toastr.options = {
   "positionClass": "toast-top-center",
@@ -51,11 +53,7 @@ Template.main.rendered = function() {
         var x = Math.floor(e.pageX / textureSize);
         var y = Math.floor(e.pageY / textureSize);
         if(selectedImage.src != "") {
-            var find = Grid.findOne({x: x, y: y});
-            if(find == null)
-                Grid.insert({x: x, y: y, img: selectedImage.src});
-            else
-                Grid.update({_id: find._id}, {$set: {img: selectedImage.src}});
+            Meteor.call('addTile', x, y, selectedImage.src);
             grid[x][y] = selectedImage;
             redrawSection(x, y, 1, 1, x * textureSize, y * textureSize);
             drawRectangleBorderInContex(ctx, (x * textureSize) + 1, (y * textureSize) + 1, textureSize - 2, textureSize - 2);
@@ -114,24 +112,61 @@ Template.main.events({
         var img = new Image(textureSize, textureSize);
         img.src = $(e.target).attr('src');
         selectedImage = img;
+    },
+    'click #pageFirst': function() {
+        var texGrid = $("#texGrid");
+        texGrid.empty();
+        for(i = 0; i < 20; i++)
+            addTexToGrid(loadedTextures[i]);
+    },
+    'click #pageLeft': function() {
+        pageLocation -= 20;
+        if(pageLocation < 20)
+            pageLocation = 20;
+        var texGrid = $("#texGrid");
+        texGrid.empty();
+        for(i = pageLocation - 20; i < pageLocation; i++)
+            addTexToGrid(loadedTextures[i]);
+    },
+    'click #pageRight': function() {
+        if(loadedTextures.length % 20 == 0) {
+            pageLocation += 20;
+            var texGrid = $("#texGrid");
+            texGrid.empty();
+            Meteor.subscribe('tiles', pageLocation);
+        } else {
+            var texGrid = $("#texGrid");
+            texGrid.empty();
+            for(i = pageLocation; i < loadedTextures.length; i++)
+                addTexToGrid(loadedTextures[i]);
+        }
+    },
+    'click #pageLast': function() {
+        alert("not functional");
     }
 });
 
+function addTexToGrid(fields) {
+    var tile = fields.tile;
+    var texGrid = $("#texGrid");
+    var lastRow = texGrid.children().last();
+    var amount = lastRow.children().length;
+    var imgHTML = "<img width='32px' height='32px' src=" + tile + "></div>";
+    if(amount == 0)
+        texGrid.append("<div class='row pad'><div class='col-xs-1'></div><div class='col-xs-2'>" + imgHTML + "</div></div></div>");
+
+    if(amount < 5) {
+        lastRow.append("<div class='col-xs-2'>" + imgHTML + "</div></div>");
+    }
+    else {
+        lastRow = lastRow.parent();
+        lastRow.append("<div class='row pad'><div class='col-xs-1'></div><div class='col-xs-2'>" + imgHTML + "</div></div></div>");
+    }
+}
+
 Tiles.find().observeChanges({
     added: function(id, fields) {
-        var tile = fields.tile;
-        var texGrid = $("#texGrid");
-        var lastRow = texGrid.children().last();
-        var amount = lastRow.children().length;
-        if(amount == 0)
-            texGrid.append("<div class='row pad'><div class='col-xs-1'></div><div class='col-xs-2'><img width='32px' height='32px' src=" + tile + "></div></div></div>");
-
-        if(amount < 5) {
-            lastRow.append("<div class='col-xs-2'><img width='32px' height='32px' src=" + tile +"></div></div>");
-        }
-        else {
-            lastRow = lastRow.parent();
-            lastRow.append("<div class='row pad'><div class='col-xs-1'></div><div class='col-xs-2'><img width='32px' height='32px' src="+ tile + "></div></div></div>");
-        }
+        loadedTextures.push(fields);
+        addTexToGrid(fields);
     },
 });

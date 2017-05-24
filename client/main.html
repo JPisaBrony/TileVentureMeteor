@@ -20,12 +20,22 @@
         <div class="row pad">
             <div class="col-xs-1"></div>
             <div class="col-xs-9">
-                <button id="createTexture" class="btn" style="width: 100%;">Create Texture</button>
+                <button id="createTexture" class="btn btn-default" style="width: 100%;">Create Texture</button>
             </div>
         </div>
         <div class="row pad">
             <div class="col-sm-12 text-center">Textures</div>
         </div>
         <div class="row pad" id="texGrid"></div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="pagination" style="padding-left: 5px;">
+                    <li class="page-item" id="pageFirst"><a class="page-link">First</a></li>
+                    <li class="page-item" id="pageLeft"><a class="page-link"><i class="fa fa-arrow-left"></i></a></li>
+                    <li class="page-item" id="pageRight"><a class="page-link"><i class="fa fa-arrow-right"></i></a></li>
+                    <li class="page-item" id="pageLast"><a class="page-link">Last</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </template>

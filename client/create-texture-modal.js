@@ -60,6 +60,6 @@ Template.createTextureModal.events({
             }
         }
         var tile = canvas.toDataURL();
-        Tiles.insert({tile: tile});
+        Meteor.call("addTexture", tile);
     }
 });
