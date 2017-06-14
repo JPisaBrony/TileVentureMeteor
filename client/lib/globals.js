@@ -13,3 +13,7 @@ lastTextureSel = null;
 Meteor.subscribe('grid');
 Meteor.subscribe('tiles');
 numberOfTextures = 0;
+totalTiles = 0;
+Meteor.call("totalTiles", function(err, data) {
+    totalTiles = data;
+});

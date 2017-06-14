@@ -23,5 +23,8 @@ Meteor.methods({
     },
     'addTexture': function(img) {
         Tiles.insert({tile: img});
+    },
+    'totalTiles': function() {
+        return Tiles.find().count();
     }
 });

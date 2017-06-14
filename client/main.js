@@ -130,7 +130,6 @@ Template.main.events({
             addTexToGrid(loadedTextures[i]);
     },
     'click #pageRight': function() {
-        var totalTiles = 67;
         if(pageLocation % 20 == 0) {
             pageLocation += 20;
             if(pageLocation > totalTiles)
