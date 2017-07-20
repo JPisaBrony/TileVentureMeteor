@@ -9,7 +9,7 @@ Meteor.startup(() => {
     });
 
     Meteor.publish('tiles', function(page = 0) {
-        return Tiles.find({}, {skip: page, limit: 20});
+        return Tiles.find({ "_id": { $ne: "id" }}, { skip: page, limit: 20, sort: { id: 1 } });
     });
 });
 
@@ -22,9 +22,13 @@ Meteor.methods({
             Grid.update({_id: find._id}, {$set: {img: img}});
     },
     'addTexture': function(img) {
-        Tiles.insert({tile: img});
+        var doc = {
+            id: incrementCounter(Tiles, 'id'),
+            tile: img
+        }
+        Tiles.insert(doc);
     },
     'totalTiles': function() {
-        return Tiles.find().count();
+        return Tiles.find().count() - 1;
     }
 });

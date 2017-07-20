@@ -115,8 +115,7 @@ Template.main.events({
     },
     'click #pageFirst': function() {
         pageLocation = 0;
-        var texGrid = $("#texGrid");
-        texGrid.empty();
+        $("#texGrid").empty();
         for(i = 0; i < 20; i++)
             addTexToGrid(loadedTextures[i]);
     },
@@ -124,33 +123,47 @@ Template.main.events({
         pageLocation -= 20;
         if(pageLocation < 20)
             pageLocation = 0;
-        var texGrid = $("#texGrid");
-        texGrid.empty();
-        for(i = pageLocation; i < pageLocation + 20; i++)
-            addTexToGrid(loadedTextures[i]);
+        $("#texGrid").empty();
+        if(loadedTextures[pageLocation] == null || loadedTextures[pageLocation] == 0) {
+            Meteor.subscribe('tiles', pageLocation);
+        } else {
+            for(i = pageLocation; i < pageLocation + 20; i++)
+                addTexToGrid(loadedTextures[i]);
+        }
     },
     'click #pageRight': function() {
-        if(pageLocation % 20 == 0) {
-            pageLocation += 20;
-            if(pageLocation > totalTiles)
-                pageLocation -= 20; 
-            var texGrid = $("#texGrid");
-            texGrid.empty();
-            if(loadedTextures.length == pageLocation && pageLocation <= totalTiles) {
-                Meteor.subscribe('tiles', pageLocation);
+        pageLocation += 20;
+        if(pageLocation >= totalTiles)
+            pageLocation -= 20; 
+        $("#texGrid").empty();
+        if(loadedTextures[pageLocation] == null || loadedTextures[pageLocation] == 0) {
+            Meteor.subscribe('tiles', pageLocation);
+        } else {
+            if(pageLocation + 20 < totalTiles) {
+                for(i = pageLocation; i < pageLocation + 20; i++)
+                    addTexToGrid(loadedTextures[i]);
             } else {
-                if(pageLocation + 20 < totalTiles) {
-                    for(i = pageLocation; i < pageLocation + 20; i++)
-                        addTexToGrid(loadedTextures[i]);
-                } else {
-                    for(i = pageLocation; i < loadedTextures.length; i++)
-                        addTexToGrid(loadedTextures[i]);
-                }
+                for(i = pageLocation; i < loadedTextures.length; i++)
+                    addTexToGrid(loadedTextures[i]);
             }
         }
     },
     'click #pageLast': function() {
-        alert("not functional");
+        $("#texGrid").empty();
+        var rem = totalTiles % 20;
+        if(rem == 0)
+            rem = 20;
+
+        if(loadedTextures.length < totalTiles) {
+            for(i = 0; i < totalTiles - 20 - pageLocation; i++)
+                loadedTextures.push(0);
+
+            Meteor.subscribe('tiles', totalTiles - rem);
+        } else {
+            for(i = totalTiles - rem; i < totalTiles; i++)
+                addTexToGrid(loadedTextures[i]);
+        }
+        pageLocation = totalTiles - rem;
     }
 });
 
@@ -174,7 +187,10 @@ function addTexToGrid(fields) {
 
 Tiles.find().observeChanges({
     added: function(id, fields) {
-        loadedTextures.push(fields);
+        if(loadedTextures[fields.id - 1] == 0)
+            loadedTextures[fields.id - 1] = fields;
+        else
+            loadedTextures.push(fields);
         addTexToGrid(fields);
     },
 });
