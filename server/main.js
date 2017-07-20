@@ -22,11 +22,17 @@ Meteor.methods({
             Grid.update({_id: find._id}, {$set: {img: img}});
     },
     'addTexture': function(img) {
-        var doc = {
-            id: incrementCounter(Tiles, 'id'),
-            tile: img
+        var tile = Tiles.findOne({tile: img});
+        if(tile == null) {
+            var doc = {
+                id: incrementCounter(Tiles, 'id'),
+                tile: img
+            }
+            Tiles.insert(doc);
+            return true;
+        } else {
+            return false;
         }
-        Tiles.insert(doc);
     },
     'totalTiles': function() {
         return Tiles.find().count() - 1;
