@@ -61,6 +61,36 @@ Template.main.rendered = function() {
             toastr.error("Select a texture on the left.");
         }
     });
+
+    $(window).resize(function(e) {
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        c.width = w;
+        c.height = h;
+        for(i = 0; i < w; i += textureSize) {
+            for(j = 0; j < h; j+= textureSize) {
+                var g = grid[Math.floor(i/textureSize)];
+                if(g == null) {
+                    grid[Math.floor(i/textureSize)] = [];
+                    for(j = 0; j < h+textureSize; j += textureSize) {
+                        grid[Math.floor(i/textureSize)][Math.floor(j/textureSize)] = img;
+                    }
+                }
+                g = grid[Math.floor(i/textureSize)][Math.floor(j/textureSize)];
+                if(g == null) {
+                    grid[Math.floor(i/textureSize)][Math.floor(j/textureSize)] = img; 
+                }
+            }
+        }
+
+        for(i = 0; i < w; i += textureSize) {
+            for(j = 0; j < h; j += textureSize) {
+                var tile = grid[Math.floor(i/textureSize)][Math.floor(j/textureSize)];
+                if(tile != null)
+                    ctx.drawImage(tile, i, j);
+            }
+        }
+    });
     
     // initial render of all tiles
     img.onload = function() {
