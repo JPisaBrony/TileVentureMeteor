@@ -63,6 +63,8 @@ Template.createTextureModal.events({
         Meteor.call("addTexture", tile, function(err, resp) {
             if(resp == false)
                 toastr.error("Texture exists.");
+            else
+                Modal.hide("createTextureModal");
         });
     }
 });
